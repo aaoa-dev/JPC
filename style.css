@@ -35,12 +35,12 @@ h1 em{font-style:italic;color:var(--muted);}
 .rule{height:1px;background:var(--line-strong);border:0;margin:26px 0 0;}
 
 /* ---- Layout ----
-   Form on top, results below — results read better as one full-width
+   Form on top, results below; results read better as one full-width
    block than a split column. */
 .sections{margin-top:34px;}
 .inputs{margin-bottom:40px;}
 
-/* earn-target's form has few, short fields — let multicol auto-balance them */
+/* earn-target's form has few, short fields, so let multicol auto-balance them */
 @media(min-width:821px){
   .calc-earn .inputs{column-count:2;column-gap:40px;}
   .calc-earn .inputs .field{break-inside:avoid-column;-webkit-column-break-inside:avoid;}
@@ -73,7 +73,7 @@ h1 em{font-style:italic;color:var(--muted);}
 .money input:focus{outline:none;}
 .money .unit{font-size:13px;color:var(--faint);white-space:nowrap;}
 
-/* range slider — touch friendly */
+/* range slider (touch friendly) */
 .slider{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;cursor:pointer;margin:2px 0;touch-action:pan-y;-webkit-tap-highlight-color:transparent;}
 .slider::-webkit-slider-runnable-track{height:4px;border-radius:3px;background:var(--line-strong);}
 .slider::-moz-range-track{height:4px;border-radius:3px;background:var(--line-strong);}
