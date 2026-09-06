@@ -1,0 +1,188 @@
+:root{
+  color-scheme:light dark;
+  --bg:#f6f4ee; --surface:#fffdf9; --field:#fffdf9;
+  --text:#1a1917; --muted:#726d64; --faint:#a49e93;
+  --line:#e6e2d8; --line-strong:#cec8bb;
+  --pos:#2f6d46; --neg:#b23b2e;
+  --active-bg:#1a1917; --active-fg:#f6f4ee;
+  --shadow:0 1px 2px rgba(26,25,23,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#121211; --surface:#1b1a17; --field:#232220;
+    --text:#ece8df; --muted:#9c968a; --faint:#6d685d;
+    --line:#2a2926; --line-strong:#3b3931;
+    --pos:#82bd93; --neg:#e28a7e;
+    --active-bg:#ece8df; --active-fg:#121211;
+    --shadow:0 1px 2px rgba(0,0,0,.3);
+  }
+}
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;background:var(--bg);}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:"IBM Plex Sans",system-ui,sans-serif;
+  line-height:1.55;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1040px;margin:0 auto;padding:clamp(22px,4vw,44px) clamp(18px,5vw,40px) 90px;}
+
+/* ---- Masthead ---- */
+.kicker{font-size:11.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px;}
+.kicker .jp{font-family:"Newsreader",serif;font-size:15px;letter-spacing:.1em;color:var(--text);text-transform:none;}
+h1{font-family:"Newsreader",serif;font-weight:500;letter-spacing:-.01em;font-size:clamp(30px,6vw,50px);line-height:1.04;margin:18px 0 12px;max-width:16ch;}
+h1 em{font-style:italic;color:var(--muted);}
+.lede{color:var(--muted);font-size:15px;max-width:56ch;margin:0;}
+.rule{height:1px;background:var(--line-strong);border:0;margin:26px 0 0;}
+
+/* ---- Layout ----
+   Form on top, results below — results read better as one full-width
+   block than a split column. */
+.sections{margin-top:34px;}
+.inputs{margin-bottom:40px;}
+
+/* earn-target's form has few, short fields — let multicol auto-balance them */
+@media(min-width:821px){
+  .calc-earn .inputs{column-count:2;column-gap:40px;}
+  .calc-earn .inputs .field{break-inside:avoid-column;-webkit-column-break-inside:avoid;}
+}
+
+/* take-home's form is grouped explicitly: identity on the left, spending on the right */
+@media(min-width:821px){
+  .input-cols{display:grid;grid-template-columns:1fr 1fr;column-gap:40px;}
+}
+
+/* condensed living-cost sliders: two-up instead of one long stack */
+@media(min-width:821px){
+  .exp-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:24px;}
+  .exp-grid > .flabel,.exp-grid > .exp-sum{grid-column:1/-1;}
+}
+
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin:0 0 16px;padding-bottom:10px;border-bottom:1px solid var(--line);}
+
+.field{margin-bottom:28px;}
+.field:last-child{margin-bottom:0;}
+.flabel{display:block;font-size:12.5px;letter-spacing:.02em;color:var(--muted);}
+.field > .flabel{margin-bottom:10px;}
+
+.modewrap{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;}
+
+/* salary / money input */
+.money{display:flex;align-items:baseline;gap:8px;border-bottom:1.5px solid var(--text);padding-bottom:8px;}
+.money .cur{font-family:"Newsreader",serif;font-size:26px;color:var(--muted);}
+.money input{flex:1;border:0;background:transparent;color:var(--text);width:100%;font-family:"IBM Plex Mono",monospace;font-size:28px;font-weight:500;letter-spacing:-.01em;padding:0;}
+.money input:focus{outline:none;}
+.money .unit{font-size:13px;color:var(--faint);white-space:nowrap;}
+
+/* range slider — touch friendly */
+.slider{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;cursor:pointer;margin:2px 0;touch-action:pan-y;-webkit-tap-highlight-color:transparent;}
+.slider::-webkit-slider-runnable-track{height:4px;border-radius:3px;background:var(--line-strong);}
+.slider::-moz-range-track{height:4px;border-radius:3px;background:var(--line-strong);}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;border-radius:50%;background:var(--surface);border:2px solid var(--text);margin-top:-12px;box-shadow:var(--shadow);transition:transform .1s ease;}
+.slider::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:var(--surface);border:2px solid var(--text);box-shadow:var(--shadow);}
+.slider:active::-webkit-slider-thumb{transform:scale(1.12);}
+.slider:focus-visible::-webkit-slider-thumb{outline:2px solid var(--text);outline-offset:3px;}
+.slider:focus-visible::-moz-range-thumb{outline:2px solid var(--text);outline-offset:3px;}
+
+/* segmented control */
+.seg{display:flex;gap:8px;}
+.seg button{flex:1;min-height:44px;border:1px solid var(--line-strong);background:var(--surface);color:var(--muted);border-radius:8px;cursor:pointer;padding:8px 6px;font-family:"IBM Plex Sans";font-size:13.5px;font-weight:500;transition:all .15s;-webkit-tap-highlight-color:transparent;}
+.seg button small{display:block;font-size:10.5px;color:var(--faint);margin-top:2px;font-weight:400;}
+.seg button[aria-pressed="true"]{background:var(--active-bg);color:var(--active-fg);border-color:var(--active-bg);}
+.seg button[aria-pressed="true"] small{color:var(--active-fg);opacity:.7;}
+.seg button:focus-visible{outline:2px solid var(--text);outline-offset:2px;}
+.seg.mini{width:180px;flex:none;gap:6px;}
+.seg.mini button{min-height:36px;font-size:12.5px;padding:5px;}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{min-height:44px;display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line-strong);background:var(--surface);color:var(--muted);border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13.5px;font-family:"IBM Plex Sans";transition:all .15s;-webkit-tap-highlight-color:transparent;}
+.chip .dot{width:16px;height:16px;border-radius:5px;border:1.5px solid var(--faint);position:relative;flex:none;}
+.chip[aria-pressed="true"]{border-color:var(--text);color:var(--text);}
+.chip[aria-pressed="true"] .dot{background:var(--text);border-color:var(--text);}
+.chip[aria-pressed="true"] .dot::after{content:"";position:absolute;left:4.5px;top:1px;width:4px;height:8px;border:solid var(--surface);border-width:0 2px 2px 0;transform:rotate(45deg);}
+.chip:focus-visible{outline:2px solid var(--text);outline-offset:2px;}
+.chip.hidden{display:none;}
+
+/* expense rows (take-home & savings page) */
+.exp{margin-bottom:12px;}
+.exp-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;}
+.exp-top .n{font-size:14px;}
+.exp-top .v{font-family:"IBM Plex Mono",monospace;font-size:14px;font-weight:500;}
+.exp-hint{font-size:11px;color:var(--faint);font-family:"IBM Plex Mono",monospace;margin-top:-2px;}
+.exp-sum{display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);}
+.exp-sum .n{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);}
+.exp-sum .v{font-family:"IBM Plex Mono",monospace;font-size:18px;font-weight:600;}
+
+.presets-note{font-size:12px;color:var(--faint);margin-top:10px;}
+
+/* ---- Results ---- */
+.result-hero{margin-bottom:30px;}
+.result-hero .rlabel{font-size:12.5px;letter-spacing:.04em;color:var(--muted);margin-bottom:6px;}
+.result-hero .big{font-family:"Newsreader",serif;font-weight:500;line-height:1;letter-spacing:-.015em;font-size:clamp(44px,9vw,72px);font-variant-numeric:tabular-nums;}
+.big.pos{color:var(--text);}
+.big.neg{color:var(--neg);}
+.result-hero .meta{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:baseline;font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--muted);}
+.result-hero .meta .tag.neg{color:var(--neg);}
+
+.breakdown{margin-top:8px;}
+.brow{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:12px 0;border-bottom:1px solid var(--line);}
+.brow .bl{font-size:14px;}
+.brow .bl small{display:block;font-size:11px;color:var(--faint);font-family:"IBM Plex Mono",monospace;margin-top:1px;}
+.brow .bv{font-family:"IBM Plex Mono",monospace;font-size:15px;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right;}
+.bvy{display:block;}
+.bvm{display:block;font-size:11px;font-weight:400;color:var(--faint);margin-top:2px;}
+.bv.out{color:var(--neg);}
+
+/* savings range (take-home & savings page) */
+.range{margin-top:34px;}
+.range h3{font-family:"Newsreader",serif;font-weight:500;font-size:19px;margin:0 0 4px;}
+.range .sub{font-size:12.5px;color:var(--muted);margin:0 0 20px;max-width:52ch;}
+.rbar{margin-bottom:18px;}
+.rbar-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:8px;}
+.rbar-top .n{font-size:13.5px;}
+.rbar-top .n b{font-weight:600;}
+.rbar-top .v{font-family:"IBM Plex Mono",monospace;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;}
+.track{height:6px;border-radius:4px;background:var(--line);position:relative;overflow:hidden;}
+.fill{position:absolute;inset:0 auto 0 0;background:var(--pos);border-radius:4px;transition:width .4s cubic-bezier(.4,0,.2,1);}
+.fill.neg{background:var(--neg);}
+.rbar .rsub{font-size:11px;color:var(--faint);font-family:"IBM Plex Mono",monospace;margin-top:6px;}
+.rbar.on .rbar-top .n b{border-bottom:2px solid var(--text);}
+
+.foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);font-size:11.5px;color:var(--faint);max-width:78ch;}
+.foot a{color:var(--muted);}
+
+@media(prefers-reduced-motion:reduce){*{transition:none!important;}}
+
+/* ---- page-specific: net row & rate tag differ between the two calculators ---- */
+.calc-earn .brow.top{border-bottom:1.5px solid var(--text);}
+.calc-earn .brow.top .bl{font-weight:600;}
+.calc-earn .brow.top .bv{font-weight:600;font-size:16px;}
+.calc-earn .brow.net .bl{font-weight:600;}
+.calc-earn .brow.net .bvy{color:var(--pos);font-weight:600;}
+.calc-earn .result-hero .meta .tag{color:var(--neg);}
+
+.calc-take-home .brow.net{border-bottom:1.5px solid var(--text);}
+.calc-take-home .brow.net .bl{font-weight:600;}
+.calc-take-home .brow.net .bv{font-weight:600;font-size:16px;}
+.calc-take-home .result-hero .meta .tag{color:var(--pos);}
+
+/* ---- combined index.html: mode toggle ---- */
+.mode-toggle{max-width:520px;margin-bottom:30px;}
+
+/* ---- desktop density: mobile spacing is generous on purpose (tap targets,
+   thumb reach) but the same numbers push results below the fold on desktop.
+   Tighten the vertical rhythm above the fold without touching mobile. ---- */
+@media(min-width:821px){
+  .wrap{padding-top:24px;}
+  .mode-toggle{margin-bottom:20px;}
+  h1{margin:12px 0 8px;}
+  .rule{margin:18px 0 0;}
+  .sections{margin-top:22px;}
+  .inputs{margin-bottom:24px;}
+  .eyebrow{margin-bottom:12px;padding-bottom:8px;}
+  .field{margin-bottom:18px;}
+  .presets-note{margin-top:6px;}
+  .exp{margin-bottom:8px;}
+  .slider{height:36px;}
+  .seg button,.chip{min-height:38px;}
+  .result-hero{margin-bottom:20px;}
+}

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Japan Salary &amp; Tax Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="mode-toggle">
+    <div class="seg" role="group" aria-label="Calculator mode">
+      <button id="modeTakeHome" aria-pressed="true">I know my salary</button>
+      <button id="modeEarn" aria-pressed="false">I know my target take-home</button>
+    </div>
+  </div>
+
+  <section class="calc calc-take-home" id="panelTakeHome">
+
+  <div class="kicker"><span class="jp">家計簿</span> Japan · FY2026</div>
+
+  <h1>Take-home &amp; <em>savings</em></h1>
+  <p class="lede">What a salary in Japan leaves you after tax, insurance and living costs — and how much of it you could keep.</p>
+  <hr class="rule">
+
+  <div class="sections">
+
+    <!-- INPUTS -->
+    <section class="inputs" aria-label="Inputs">
+      <p class="eyebrow">What you earn &amp; how you live</p>
+
+      <div class="input-cols">
+        <div class="input-col">
+          <div class="field">
+            <label class="flabel" for="th-salaryText">Gross annual salary</label>
+            <div class="money">
+              <span class="cur">¥</span>
+              <input id="th-salaryText" inputmode="numeric" autocomplete="off" value="4,500,000">
+              <span class="unit">/ year</span>
+            </div>
+            <input id="th-salaryRange" class="slider" type="range" min="0" max="20000000" step="100000" value="4500000" aria-label="Salary">
+          </div>
+
+          <div class="field">
+            <span class="flabel">You work as</span>
+            <div class="seg" role="group" aria-label="Worker type">
+              <button id="th-wEmp" aria-pressed="true">Company employee</button>
+              <button id="th-wFree" aria-pressed="false">Freelancer</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="flabel">Situation</span>
+            <div class="chips">
+              <button class="chip" id="th-tFirst" aria-pressed="false"><span class="dot"></span>First year in Japan</button>
+              <button class="chip hidden" id="th-tBlue" aria-pressed="false"><span class="dot"></span>Blue Return</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-col">
+          <div class="field">
+            <span class="flabel">Lifestyle</span>
+            <div class="seg" role="group" aria-label="Lifestyle preset">
+              <button id="th-lFrugal" aria-pressed="false">Frugal</button>
+              <button id="th-lStandard" aria-pressed="true">Standard</button>
+              <button id="th-lComfort" aria-pressed="false">Comfortable</button>
+            </div>
+            <p class="presets-note">Sets the sliders below — adjust any of them to fine-tune.</p>
+          </div>
+
+          <div class="field exp-grid" id="th-expList">
+            <span class="flabel">Monthly living costs</span>
+            <div class="exp-sum">
+              <span class="n">Total / month</span>
+              <span class="v" id="th-expTotal">¥0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="results" aria-label="Results">
+      <p class="eyebrow">The result</p>
+
+      <div class="result-hero">
+        <div class="rlabel">Estimated yearly savings</div>
+        <div class="big pos" id="th-rSavings">¥0</div>
+        <div class="meta">
+          <span id="th-rSavingsMo">¥0 / month</span>
+          <span class="tag" id="th-rRate">0% of take-home</span>
+        </div>
+      </div>
+
+      <div class="breakdown">
+        <div class="brow">
+          <span class="bl">Salary<small>gross</small></span>
+          <span class="bv"><span class="bvy" id="th-rSalary">¥0</span><span class="bvm" id="th-mSalary"></span></span>
+        </div>
+        <div class="brow">
+          <span class="bl">Insurance &amp; pension<small id="th-rSocialPct">social</small></span>
+          <span class="bv out"><span class="bvy" id="th-rSocial">¥0</span><span class="bvm" id="th-mSocial"></span></span>
+        </div>
+        <div class="brow">
+          <span class="bl">Income tax<small id="th-rIncPct">national + 2.1%</small></span>
+          <span class="bv out"><span class="bvy" id="th-rIncome">¥0</span><span class="bvm" id="th-mIncome"></span></span>
+        </div>
+        <div class="brow">
+          <span class="bl">Resident tax<small id="th-rResPct">local</small></span>
+          <span class="bv out"><span class="bvy" id="th-rResident">¥0</span><span class="bvm" id="th-mResident"></span></span>
+        </div>
+        <div class="brow net">
+          <span class="bl">Net income<small>take-home</small></span>
+          <span class="bv"><span class="bvy" id="th-rNet">¥0</span><span class="bvm" id="th-mNet"></span></span>
+        </div>
+        <div class="brow">
+          <span class="bl">Living costs<small>household</small></span>
+          <span class="bv out"><span class="bvy" id="th-rExpenses">¥0</span><span class="bvm" id="th-mExpenses"></span></span>
+        </div>
+      </div>
+
+      <div class="range">
+        <h3>Savings range</h3>
+        <p class="sub">Same income and taxes, three ways of living — the spread of what you could keep each year.</p>
+        <div id="th-rangeBars"></div>
+      </div>
+    </section>
+  </div>
+
+  </section>
+
+  <section class="calc calc-earn" id="panelEarn" hidden>
+
+  <div class="kicker"><span class="jp">逆算</span> Japan · FY2026</div>
+  <h1>How much to <em>earn</em></h1>
+  <p class="lede">Name the take-home you want. This works backwards through Japan&rsquo;s tax, insurance and pension to the gross salary it takes to get there.</p>
+  <hr class="rule">
+
+  <div class="sections">
+
+    <!-- INPUTS -->
+    <section class="inputs" aria-label="Inputs">
+      <p class="eyebrow">The take-home you want</p>
+
+      <div class="field">
+        <div class="modewrap">
+          <span class="flabel">Target net pay</span>
+          <div class="seg mini" role="group" aria-label="Target period">
+            <button id="et-mMonth" aria-pressed="true">Monthly</button>
+            <button id="et-mYear" aria-pressed="false">Yearly</button>
+          </div>
+        </div>
+        <div class="money">
+          <span class="cur">¥</span>
+          <input id="et-targetText" inputmode="numeric" autocomplete="off" value="350,000">
+          <span class="unit" id="et-targetUnit">/ month</span>
+        </div>
+        <input id="et-targetRange" class="slider" type="range" min="0" max="1000" step="1" value="327" aria-label="Target net pay">
+      </div>
+
+      <div class="field">
+        <span class="flabel">You work as</span>
+        <div class="seg" role="group" aria-label="Worker type">
+          <button id="et-wEmp" aria-pressed="true">Company employee</button>
+          <button id="et-wFree" aria-pressed="false">Freelancer</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="flabel">Situation</span>
+        <div class="chips">
+          <button class="chip" id="et-tFirst" aria-pressed="false"><span class="dot"></span>First year in Japan</button>
+          <button class="chip hidden" id="et-tBlue" aria-pressed="false"><span class="dot"></span>Blue Return</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="results" aria-label="Results">
+      <p class="eyebrow" id="et-heroLabel">To take home ¥0 / month, you need</p>
+
+      <div class="result-hero">
+        <div class="rlabel">Required gross salary</div>
+        <div class="big" id="et-grossBig">¥0</div>
+        <div class="meta">
+          <span id="et-grossMo">¥0 / month gross</span>
+          <span class="tag" id="et-rate">0% to tax &amp; insurance</span>
+        </div>
+      </div>
+
+      <div class="breakdown">
+        <div class="brow top">
+          <span class="bl">Gross salary<small>what you&rsquo;d need to earn</small></span>
+          <span class="bv"><span class="bvy" id="et-rGross">¥0</span><span class="bvm" id="et-mGross"></span></span>
+        </div>
+        <div class="brow">
+          <span class="bl">Insurance &amp; pension<small id="et-rSocialPct">social</small></span>
+          <span class="bv out"><span class="bvy" id="et-rSocial">¥0</span><span class="bvm" id="et-mSocial"></span></span>
+        </div>
+        <div class="brow">
+          <span class="bl">Income tax<small id="et-rIncPct">national + 2.1%</small></span>
+          <span class="bv out"><span class="bvy" id="et-rIncome">¥0</span><span class="bvm" id="et-mIncome"></span></span>
+        </div>
+        <div class="brow">
+          <span class="bl">Resident tax<small id="et-rResPct">local</small></span>
+          <span class="bv out"><span class="bvy" id="et-rResident">¥0</span><span class="bvm" id="et-mResident"></span></span>
+        </div>
+        <div class="brow net">
+          <span class="bl">Net income<small>≈ your target</small></span>
+          <span class="bv"><span class="bvy" id="et-rNet">¥0</span><span class="bvm" id="et-mNet"></span></span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  </section>
+
+  <p class="foot">
+    Estimates only, not official tax advice — based on FY2026 rates (progressive national income tax +2.1%
+    reconstruction surtax, 10% resident tax, ¥480,000 basic deduction). Employees pay 14.75% social insurance;
+    freelancers pay National Pension plus ~8% health insurance.
+  </p>
+
+</div>
+
+<script src="script.js"></script>
+<script src="take-home.js"></script>
+<script src="earn-target.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
