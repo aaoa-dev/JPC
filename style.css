@@ -1,19 +1,19 @@
 :root{
   color-scheme:light dark;
-  --bg:#f6f4ee; --surface:#fffdf9; --field:#fffdf9;
-  --text:#1a1917; --muted:#726d64;
-  --line:#e6e2d8; --line-strong:#cec8bb;
+  --bg:#f8f8f8; --surface:#ffffff; --field:#ffffff;
+  --text:#0f0f0f; --muted:#67677e;
+  --line:#e2e2e8; --line-strong:#b9b9c5;
   --pos:#2f6d46; --neg:#b23b2e;
-  --active-bg:#1a1917; --active-fg:#f6f4ee;
-  --shadow:0 1px 2px rgba(26,25,23,.05);
+  --active-bg:#0f0f0f; --active-fg:#f8f8f8;
+  --shadow:0 1px 2px rgba(0,0,0,.05);
 }
 @media (prefers-color-scheme: dark){
   :root{
-    --bg:#121211; --surface:#1b1a17; --field:#232220;
-    --text:#ece8df; --muted:#9c968a;
-    --line:#2a2926; --line-strong:#3b3931;
+    --bg:#111111; --surface:#191919; --field:#222222;
+    --text:#eeeeee; --muted:#7b7b7b;
+    --line:#1f1f1f; --line-strong:#3a3a3a;
     --pos:#82bd93; --neg:#e28a7e;
-    --active-bg:#ece8df; --active-fg:#121211;
+    --active-bg:#eeeeee; --active-fg:#111111;
     --shadow:0 1px 2px rgba(0,0,0,.3);
   }
 }
@@ -83,9 +83,8 @@ h1 em{font-style:italic;color:var(--muted);}
 .slider{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;cursor:pointer;margin:2px 0;touch-action:pan-y;-webkit-tap-highlight-color:transparent;}
 .slider::-webkit-slider-runnable-track{height:4px;border-radius:3px;background:var(--line-strong);}
 .slider::-moz-range-track{height:4px;border-radius:3px;background:var(--line-strong);}
-.slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;border-radius:50%;background:var(--surface);border:2px solid var(--text);margin-top:-12px;box-shadow:var(--shadow);transition:transform .1s ease;}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;border-radius:50%;background:var(--surface);border:2px solid var(--text);margin-top:-12px;box-shadow:var(--shadow);}
 .slider::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:var(--surface);border:2px solid var(--text);box-shadow:var(--shadow);}
-.slider:active::-webkit-slider-thumb{transform:scale(1.12);}
 .slider:focus-visible::-webkit-slider-thumb{outline:2px solid var(--text);outline-offset:3px;}
 .slider:focus-visible::-moz-range-thumb{outline:2px solid var(--text);outline-offset:3px;}
 
@@ -114,7 +113,8 @@ h1 em{font-style:italic;color:var(--muted);}
 .chip .dot{width:16px;height:16px;border-radius:var(--chip-dot-r);border:1.5px solid var(--muted);position:relative;flex:none;}
 .chip[aria-pressed="true"]{border-color:var(--text);color:var(--text);}
 .chip[aria-pressed="true"] .dot{background:var(--text);border-color:var(--text);}
-.chip[aria-pressed="true"] .dot::after{content:"";position:absolute;left:4.5px;top:1px;width:4px;height:8px;border:solid var(--surface);border-width:0 2px 2px 0;transform:rotate(45deg);}
+.chip .dot::after{content:"";position:absolute;left:4.5px;top:1px;width:4px;height:8px;border:solid var(--surface);border-width:0 2px 2px 0;transform:rotate(45deg);opacity:0;}
+.chip[aria-pressed="true"] .dot::after{opacity:1;}
 .chip:focus-visible{outline:2px solid var(--text);outline-offset:2px;}
 .chip.hidden{display:none;}
 
@@ -166,7 +166,7 @@ h1 em{font-style:italic;color:var(--muted);}
 .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);font-size:11.5px;color:var(--muted);max-width:78ch;}
 .foot a{color:var(--muted);}
 
-@media(prefers-reduced-motion:reduce){*{transition:none!important;}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;}}
 
 /* ---- page-specific: net row & rate tag differ between the two calculators ---- */
 .calc-earn .brow.top{border-bottom:1.5px solid var(--text);}
@@ -189,6 +189,26 @@ h1 em{font-style:italic;color:var(--muted);}
 .mode-seg button + button{border-left:1px solid var(--line-strong);}
 .mode-seg button[aria-pressed="true"]{background:var(--active-bg);color:var(--active-fg);}
 .mode-seg button:focus-visible{outline:2px solid var(--text);outline-offset:2px;}
+
+/* Quiet interaction feedback. Transforms never change the control's layout. */
+@media(prefers-reduced-motion:no-preference){
+  .seg button,.chip{transition:background-color .15s ease,color .15s ease,border-color .15s ease,transform .12s ease-out;}
+  .seg button:active,.chip:active{transform:translateY(1px);}
+  /* Keep the fused mode control's edges stationary when pressed. */
+  .mode-seg button{transition:background-color .15s ease,color .15s ease,opacity .12s ease-out;}
+  .mode-seg button:active{opacity:.8;}
+  .chip .dot{transition:background-color .15s ease,border-color .15s ease;}
+  .chip .dot::after{transform:rotate(45deg) scale(.85);transition:opacity .12s ease-out,transform .15s ease-out;}
+  .chip[aria-pressed="true"] .dot::after{transform:rotate(45deg) scale(1);}
+  .slider::-webkit-slider-thumb{transition:transform .12s ease-out;}
+  .slider::-moz-range-thumb{transition:transform .12s ease-out;}
+  .slider:active::-webkit-slider-thumb{transform:scale(1.06);}
+  .slider:active::-moz-range-thumb{transform:scale(1.06);}
+}
+@media(hover:hover) and (pointer:fine){
+  .seg button:not([aria-pressed="true"]):hover,.chip:hover{border-color:var(--text);color:var(--text);}
+  .mode-seg button:not([aria-pressed="true"]):hover{color:var(--text);}
+}
 
 /* ---- desktop density: mobile spacing is generous on purpose (tap targets,
    thumb reach) but the same numbers push results below the fold on desktop.
