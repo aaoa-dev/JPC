@@ -10,22 +10,24 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="wrap">
+<main class="wrap">
 
-  <div class="mode-toggle">
-    <div class="seg" role="group" aria-label="Calculator mode">
-      <button id="modeTakeHome" aria-pressed="true">I know my salary</button>
-      <button id="modeEarn" aria-pressed="false">I know my target take-home</button>
+  <div class="header">
+    <div class="header-text">
+      <div class="kicker"><span class="jp" id="pageKickerJp">家計簿</span> Japan · FY2026</div>
+      <h1 id="pageH1">Take-home &amp; <em>savings</em></h1>
+      <p class="lede" id="pageLede">What a salary in Japan leaves you after tax, insurance and living costs, and how much of it you could keep.</p>
+    </div>
+    <div class="mode-toggle">
+      <div class="mode-seg" role="group" aria-label="Calculator mode">
+        <button id="modeTakeHome" aria-pressed="true">Salary → Savings</button>
+        <button id="modeEarn" aria-pressed="false">Take-home → Salary</button>
+      </div>
     </div>
   </div>
+  <hr class="rule">
 
   <section class="calc calc-take-home" id="panelTakeHome">
-
-  <div class="kicker"><span class="jp">家計簿</span> Japan · FY2026</div>
-
-  <h1>Take-home &amp; <em>savings</em></h1>
-  <p class="lede">What a salary in Japan leaves you after tax, insurance and living costs, and how much of it you could keep.</p>
-  <hr class="rule">
 
   <div class="sections">
 
@@ -136,11 +138,6 @@
 
   <section class="calc calc-earn" id="panelEarn" hidden>
 
-  <div class="kicker"><span class="jp">逆算</span> Japan · FY2026</div>
-  <h1>How much to <em>earn</em></h1>
-  <p class="lede">Name the take-home you want. This works backwards through Japan&rsquo;s tax, insurance and pension to the gross salary it takes to get there.</p>
-  <hr class="rule">
-
   <div class="sections">
 
     <!-- INPUTS -->
@@ -149,7 +146,7 @@
 
       <div class="field">
         <div class="modewrap">
-          <span class="flabel">Target net pay</span>
+          <label class="flabel" for="et-targetText">Target net pay</label>
           <div class="seg mini" role="group" aria-label="Target period">
             <button id="et-mMonth" aria-pressed="true">Monthly</button>
             <button id="et-mYear" aria-pressed="false">Yearly</button>
@@ -220,13 +217,13 @@
 
   </section>
 
-  <p class="foot">
+  <footer class="foot">
     Estimates only, not official tax advice. Based on FY2026 rates (progressive national income tax +2.1%
     reconstruction surtax, 10% resident tax, ¥480,000 basic deduction). Employees pay 14.75% social insurance;
     freelancers pay National Pension plus ~8% health insurance.
-  </p>
+  </footer>
 
-</div>
+</main>
 
 <script src="script.js"></script>
 <script src="take-home.js"></script>

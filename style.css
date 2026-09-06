@@ -1,7 +1,7 @@
 :root{
   color-scheme:light dark;
   --bg:#f6f4ee; --surface:#fffdf9; --field:#fffdf9;
-  --text:#1a1917; --muted:#726d64; --faint:#a49e93;
+  --text:#1a1917; --muted:#726d64;
   --line:#e6e2d8; --line-strong:#cec8bb;
   --pos:#2f6d46; --neg:#b23b2e;
   --active-bg:#1a1917; --active-fg:#f6f4ee;
@@ -10,7 +10,7 @@
 @media (prefers-color-scheme: dark){
   :root{
     --bg:#121211; --surface:#1b1a17; --field:#232220;
-    --text:#ece8df; --muted:#9c968a; --faint:#6d685d;
+    --text:#ece8df; --muted:#9c968a;
     --line:#2a2926; --line-strong:#3b3931;
     --pos:#82bd93; --neg:#e28a7e;
     --active-bg:#ece8df; --active-fg:#121211;
@@ -27,6 +27,11 @@ body{
 .wrap{max-width:1040px;margin:0 auto;padding:clamp(22px,4vw,44px) clamp(18px,5vw,40px) 90px;}
 
 /* ---- Masthead ---- */
+.header{display:flex;flex-direction:column;gap:16px;}
+@media(min-width:821px){
+  .header{flex-direction:row;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px;}
+}
+.header-text{min-width:0;}
 .kicker{font-size:11.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px;}
 .kicker .jp{font-family:"Newsreader",serif;font-size:15px;letter-spacing:.1em;color:var(--text);text-transform:none;}
 h1{font-family:"Newsreader",serif;font-weight:500;letter-spacing:-.01em;font-size:clamp(30px,6vw,50px);line-height:1.04;margin:18px 0 12px;max-width:16ch;}
@@ -57,7 +62,7 @@ h1 em{font-style:italic;color:var(--muted);}
   .exp-grid > .flabel,.exp-grid > .exp-sum{grid-column:1/-1;}
 }
 
-.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin:0 0 16px;padding-bottom:10px;border-bottom:1px solid var(--line);}
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin:0 0 16px;padding-bottom:10px;border-bottom:1px solid var(--line);}
 
 .field{margin-bottom:28px;}
 .field:last-child{margin-bottom:0;}
@@ -68,10 +73,11 @@ h1 em{font-style:italic;color:var(--muted);}
 
 /* salary / money input */
 .money{display:flex;align-items:baseline;gap:8px;border-bottom:1.5px solid var(--text);padding-bottom:8px;}
+.money:focus-within{outline:2px solid var(--text);outline-offset:4px;}
 .money .cur{font-family:"Newsreader",serif;font-size:26px;color:var(--muted);}
 .money input{flex:1;border:0;background:transparent;color:var(--text);width:100%;font-family:"IBM Plex Mono",monospace;font-size:28px;font-weight:500;letter-spacing:-.01em;padding:0;}
 .money input:focus{outline:none;}
-.money .unit{font-size:13px;color:var(--faint);white-space:nowrap;}
+.money .unit{font-size:13px;color:var(--muted);white-space:nowrap;}
 
 /* range slider (touch friendly) */
 .slider{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;cursor:pointer;margin:2px 0;touch-action:pan-y;-webkit-tap-highlight-color:transparent;}
@@ -85,8 +91,8 @@ h1 em{font-style:italic;color:var(--muted);}
 
 /* segmented control */
 .seg{display:flex;gap:8px;}
-.seg button{flex:1;min-height:44px;border:1px solid var(--line-strong);background:var(--surface);color:var(--muted);border-radius:8px;cursor:pointer;padding:8px 6px;font-family:"IBM Plex Sans";font-size:13.5px;font-weight:500;transition:all .15s;-webkit-tap-highlight-color:transparent;}
-.seg button small{display:block;font-size:10.5px;color:var(--faint);margin-top:2px;font-weight:400;}
+.seg button{flex:1;min-height:44px;border:1px solid var(--line-strong);background:var(--surface);color:var(--muted);border-radius:8px;cursor:pointer;padding:8px 6px;font-family:"IBM Plex Sans";font-size:13.5px;font-weight:500;transition:background-color .15s ease,color .15s ease,border-color .15s ease;-webkit-tap-highlight-color:transparent;}
+.seg button small{display:block;font-size:10.5px;color:var(--muted);margin-top:2px;font-weight:400;}
 .seg button[aria-pressed="true"]{background:var(--active-bg);color:var(--active-fg);border-color:var(--active-bg);}
 .seg button[aria-pressed="true"] small{color:var(--active-fg);opacity:.7;}
 .seg button:focus-visible{outline:2px solid var(--text);outline-offset:2px;}
@@ -94,8 +100,18 @@ h1 em{font-style:italic;color:var(--muted);}
 .seg.mini button{min-height:36px;font-size:12.5px;padding:5px;}
 
 .chips{display:flex;flex-wrap:wrap;gap:8px;}
-.chip{min-height:44px;display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line-strong);background:var(--surface);color:var(--muted);border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13.5px;font-family:"IBM Plex Sans";transition:all .15s;-webkit-tap-highlight-color:transparent;}
-.chip .dot{width:16px;height:16px;border-radius:5px;border:1.5px solid var(--faint);position:relative;flex:none;}
+/* dot radius (5px) + pad = chip radius, so the two corners are concentric;
+   pad also drives every inset around the dot so it isn't just centered by
+   a min-height, but padding-derived on all four sides like a real icon square */
+.chip{
+  --chip-dot-r:5px; --chip-pad:8px;
+  display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line-strong);background:var(--surface);color:var(--muted);
+  border-radius:calc(var(--chip-dot-r) + var(--chip-pad));
+  padding:var(--chip-pad) calc(var(--chip-pad) * 2) var(--chip-pad) var(--chip-pad);
+  line-height:1;/* otherwise the text's line box (not the dot) sets the row height and the padding math above stops holding */
+  cursor:pointer;font-size:13.5px;font-family:"IBM Plex Sans";transition:background-color .15s ease,color .15s ease,border-color .15s ease;-webkit-tap-highlight-color:transparent;
+}
+.chip .dot{width:16px;height:16px;border-radius:var(--chip-dot-r);border:1.5px solid var(--muted);position:relative;flex:none;}
 .chip[aria-pressed="true"]{border-color:var(--text);color:var(--text);}
 .chip[aria-pressed="true"] .dot{background:var(--text);border-color:var(--text);}
 .chip[aria-pressed="true"] .dot::after{content:"";position:absolute;left:4.5px;top:1px;width:4px;height:8px;border:solid var(--surface);border-width:0 2px 2px 0;transform:rotate(45deg);}
@@ -107,12 +123,12 @@ h1 em{font-style:italic;color:var(--muted);}
 .exp-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;}
 .exp-top .n{font-size:14px;}
 .exp-top .v{font-family:"IBM Plex Mono",monospace;font-size:14px;font-weight:500;}
-.exp-hint{font-size:11px;color:var(--faint);font-family:"IBM Plex Mono",monospace;margin-top:-2px;}
+.exp-hint{font-size:11px;color:var(--muted);font-family:"IBM Plex Mono",monospace;margin-top:-2px;}
 .exp-sum{display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);}
 .exp-sum .n{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);}
 .exp-sum .v{font-family:"IBM Plex Mono",monospace;font-size:18px;font-weight:600;}
 
-.presets-note{font-size:12px;color:var(--faint);margin-top:10px;}
+.presets-note{font-size:12px;color:var(--muted);margin-top:10px;}
 
 /* ---- Results ---- */
 .result-hero{margin-bottom:30px;}
@@ -126,10 +142,10 @@ h1 em{font-style:italic;color:var(--muted);}
 .breakdown{margin-top:8px;}
 .brow{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:12px 0;border-bottom:1px solid var(--line);}
 .brow .bl{font-size:14px;}
-.brow .bl small{display:block;font-size:11px;color:var(--faint);font-family:"IBM Plex Mono",monospace;margin-top:1px;}
+.brow .bl small{display:block;font-size:11px;color:var(--muted);font-family:"IBM Plex Mono",monospace;margin-top:1px;}
 .brow .bv{font-family:"IBM Plex Mono",monospace;font-size:15px;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right;}
 .bvy{display:block;}
-.bvm{display:block;font-size:11px;font-weight:400;color:var(--faint);margin-top:2px;}
+.bvm{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:2px;}
 .bv.out{color:var(--neg);}
 
 /* savings range (take-home & savings page) */
@@ -144,10 +160,10 @@ h1 em{font-style:italic;color:var(--muted);}
 .track{height:6px;border-radius:4px;background:var(--line);position:relative;overflow:hidden;}
 .fill{position:absolute;inset:0 auto 0 0;background:var(--pos);border-radius:4px;transition:width .4s cubic-bezier(.4,0,.2,1);}
 .fill.neg{background:var(--neg);}
-.rbar .rsub{font-size:11px;color:var(--faint);font-family:"IBM Plex Mono",monospace;margin-top:6px;}
+.rbar .rsub{font-size:11px;color:var(--muted);font-family:"IBM Plex Mono",monospace;margin-top:6px;}
 .rbar.on .rbar-top .n b{border-bottom:2px solid var(--text);}
 
-.foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);font-size:11.5px;color:var(--faint);max-width:78ch;}
+.foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);font-size:11.5px;color:var(--muted);max-width:78ch;}
 .foot a{color:var(--muted);}
 
 @media(prefers-reduced-motion:reduce){*{transition:none!important;}}
@@ -165,15 +181,20 @@ h1 em{font-style:italic;color:var(--muted);}
 .calc-take-home .brow.net .bv{font-weight:600;font-size:16px;}
 .calc-take-home .result-hero .meta .tag{color:var(--pos);}
 
-/* ---- combined index.html: mode toggle ---- */
-.mode-toggle{max-width:520px;margin-bottom:30px;}
+/* ---- combined index.html: mode toggle, a fused segmented control
+   (distinct from .seg elsewhere, which is individual pill buttons) ---- */
+.mode-toggle{flex:none;}
+.mode-seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:8px;overflow:hidden;}
+.mode-seg button{flex:none;border:0;background:var(--surface);color:var(--muted);cursor:pointer;padding:9px 16px;font-family:"IBM Plex Sans";font-size:13px;font-weight:500;white-space:nowrap;transition:background-color .15s ease,color .15s ease;-webkit-tap-highlight-color:transparent;}
+.mode-seg button + button{border-left:1px solid var(--line-strong);}
+.mode-seg button[aria-pressed="true"]{background:var(--active-bg);color:var(--active-fg);}
+.mode-seg button:focus-visible{outline:2px solid var(--text);outline-offset:2px;}
 
 /* ---- desktop density: mobile spacing is generous on purpose (tap targets,
    thumb reach) but the same numbers push results below the fold on desktop.
    Tighten the vertical rhythm above the fold without touching mobile. ---- */
 @media(min-width:821px){
   .wrap{padding-top:24px;}
-  .mode-toggle{margin-bottom:20px;}
   h1{margin:12px 0 8px;}
   .rule{margin:18px 0 0;}
   .sections{margin-top:22px;}
@@ -183,6 +204,6 @@ h1 em{font-style:italic;color:var(--muted);}
   .presets-note{margin-top:6px;}
   .exp{margin-bottom:8px;}
   .slider{height:36px;}
-  .seg button,.chip{min-height:38px;}
+  .seg button{min-height:38px;}
   .result-hero{margin-bottom:20px;}
 }
