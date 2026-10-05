@@ -6,9 +6,9 @@ window.JPC=(function(){
   function $(id){return document.getElementById(id);}
 
   /* ---- FY2026 forward tax model, shared by both calculators ---- */
+  /* 2025 reform: ¥650,000 floor (was ¥550,000 up to ¥1,625,000) */
   function employmentDeduction(s){
-    if(s<=1625000)return 550000;
-    if(s<=1800000)return s*0.40-100000;
+    if(s<=1900000)return 650000;
     if(s<=3600000)return s*0.30+80000;
     if(s<=6600000)return s*0.20+440000;
     if(s<=8500000)return s*0.10+1100000;
@@ -21,17 +21,41 @@ window.JPC=(function(){
     for(var i=0;i<b.length;i++){if(base<=b[i][0])return base*b[i][1]-b[i][2];}
     return 0;
   }
+  /* Basic deduction by total income. National: 2025 reform, with the
+     ¥880k/¥680k/¥630k middle tiers that apply to 2025-2026 only.
+     Both phase out to zero above ¥25M. */
+  function basicDeductionNational(inc){
+    var b=[[1320000,950000],[3360000,880000],[4890000,680000],[6550000,630000],
+           [23500000,580000],[24000000,480000],[24500000,320000],[25000000,160000]];
+    for(var i=0;i<b.length;i++){if(inc<=b[i][0])return b[i][1];}
+    return 0;
+  }
+  function basicDeductionResident(inc){
+    if(inc<=24000000)return 430000;
+    if(inc<=24500000)return 290000;
+    if(inc<=25000000)return 150000;
+    return 0;
+  }
+  /* Employee premiums stop at the top standard monthly remuneration grade:
+     pension ¥650,000/mo, health ¥1,390,000/mo. Employment insurance is uncapped. */
+  function employeeSocial(sal){
+    var mo=sal/12;
+    var pension=Math.min(mo,650000)*0.0915*12;
+    var health=Math.min(mo,1390000)*0.05*12;
+    return pension+health+sal*0.006;
+  }
   function computeTax(sal,worker,firstYear,blueReturn){
     var isEmp=worker==="employee";
     var deduction=isEmp?employmentDeduction(sal):(blueReturn?650000:0);
     var taxable=Math.max(0,sal-deduction);
     var social;
-    if(isEmp){social=sal*0.1475;}
-    else{social=(firstYear?50000:sal*0.08)+215040;}
-    var incBase=Math.max(0,taxable-480000-social);
+    if(isEmp){social=employeeSocial(sal);}
+    /* NHI is capped per household; ¥920,000 = medical + elderly-support maximums */
+    else{social=(firstYear?50000:Math.min(sal*0.08,920000))+215040;}
+    var incBase=Math.max(0,taxable-basicDeductionNational(taxable)-social);
     var incomeTax=Math.max(0,progressiveTax(incBase))*1.021;
     var resident=0;
-    if(!firstYear){resident=Math.max(0,taxable-430000-social)*0.10+5000;}
+    if(!firstYear){resident=Math.max(0,taxable-basicDeductionResident(taxable)-social)*0.10+5000;}
     var net=sal-social-incomeTax-resident;
     return {sal:sal,social:social,incomeTax:incomeTax,resident:resident,net:net,
       socialPct:sal>0?social/sal*100:0,incPct:sal>0?incomeTax/sal*100:0,resPct:sal>0?resident/sal*100:0};
